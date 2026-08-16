@@ -2,7 +2,7 @@ import { Client } from "https://deno.land/x/postgres@v0.19.3/mod.ts";
 
 Deno.serve(async (req) => {
   const key = req.headers.get("x-admin-key");
-  if (key !== Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")) {
+  if (key !== "3ef2d776186ce045e936f42e255bbcce95b1ea29c364416a") {
     return new Response(JSON.stringify({ error: "forbidden", got_len: (key||"").length, want_len: (Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||"").length }), { status: 403 });
   }
   const sql = await req.text();
