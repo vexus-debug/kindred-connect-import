@@ -9,8 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   Plus, Trash2, ExternalLink, Upload, Image as ImageIcon,
-  Globe, Palette, Clock, Share2, Shield, MessageSquare, Camera,
+  Globe, Palette, Clock, Share2, Shield, MessageSquare, Camera, LayoutTemplate,
 } from "lucide-react";
+import { websiteTemplates, defaultTemplateId } from "@/config/websiteTemplates";
+
 import {
   useClinicSettings, useUpdateClinicSettings,
   type SiteSettings, type OperatingHour, type Certification, type GalleryItem,
@@ -78,6 +80,15 @@ export default function WebsiteSettingsPage() {
     };
     updateClinic.mutate({ id: clinicSettings.id, settings: merged });
   };
+
+  const selectedTemplate = (form.template as string) || (settings as any)?.template || defaultTemplateId;
+
+  const handleSelectTemplate = (id: string) => {
+    setForm({ ...form, template: id });
+    handleSave({ template: id });
+  };
+
+
 
   const handleHeroUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -186,8 +197,9 @@ export default function WebsiteSettingsPage() {
       </Card>
 
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-        <Tabs defaultValue="identity">
+        <Tabs defaultValue="templates">
           <TabsList className="bg-muted/50 backdrop-blur-sm flex-wrap h-auto gap-1">
+            <TabsTrigger value="templates"><LayoutTemplate className="mr-1.5 h-3.5 w-3.5" />Templates</TabsTrigger>
             <TabsTrigger value="identity"><Globe className="mr-1.5 h-3.5 w-3.5" />Identity & Hero</TabsTrigger>
             <TabsTrigger value="gallery"><Camera className="mr-1.5 h-3.5 w-3.5" />Gallery</TabsTrigger>
             <TabsTrigger value="hours"><Clock className="mr-1.5 h-3.5 w-3.5" />Hours</TabsTrigger>
@@ -196,6 +208,69 @@ export default function WebsiteSettingsPage() {
             <TabsTrigger value="trust"><Shield className="mr-1.5 h-3.5 w-3.5" />Trust & Certs</TabsTrigger>
             <TabsTrigger value="booking"><MessageSquare className="mr-1.5 h-3.5 w-3.5" />Booking</TabsTrigger>
           </TabsList>
+
+          {/* Templates */}
+          <TabsContent value="templates" className="mt-4">
+            <Card className="glass-card">
+              <CardHeader className="border-b border-border/30">
+                <CardTitle className="text-base">Website Templates</CardTitle>
+                <CardDescription>
+                  Pick one of {websiteTemplates.length} complete dental website designs. Each template changes the layout,
+                  hero style, colours, typography and section order of your public site.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {websiteTemplates.map((t) => {
+                    const active = selectedTemplate === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => handleSelectTemplate(t.id)}
+                        className={`text-left rounded-xl border transition-all overflow-hidden hover:shadow-md ${active ? "border-secondary ring-2 ring-secondary/40" : "border-border/50"}`}
+                      >
+                        {/* Mini preview */}
+                        <div className="h-28 relative" style={{ backgroundColor: t.colors.heroBg }}>
+                          <div className="absolute top-0 left-0 right-0 h-5 flex items-center justify-between px-2" style={{ backgroundColor: t.colors.primary }}>
+                            <div className="h-1.5 w-8 rounded-full bg-white/70" />
+                            <div className="h-2 w-6 rounded-sm bg-white/80" />
+                          </div>
+                          <div className={`absolute inset-x-3 top-8 space-y-1.5 ${["centered", "gradient", "card", "wave", "dark"].includes(t.hero) ? "text-center" : ""}`}>
+                            <div className="h-2.5 rounded" style={{ backgroundColor: t.colors.text, opacity: 0.85, width: t.hero === "editorial" ? "80%" : "60%", marginInline: ["centered", "gradient", "card", "wave", "dark"].includes(t.hero) ? "auto" : undefined }} />
+                            <div className="h-1.5 rounded" style={{ backgroundColor: t.colors.muted, width: "45%", marginInline: ["centered", "gradient", "card", "wave", "dark"].includes(t.hero) ? "auto" : undefined }} />
+                            <div className="h-3 w-14 rounded" style={{ backgroundColor: t.colors.primary, marginInline: ["centered", "gradient", "card", "wave", "dark"].includes(t.hero) ? "auto" : undefined }} />
+                          </div>
+                          <div className="absolute bottom-1.5 inset-x-3 grid grid-cols-3 gap-1.5">
+                            {[0, 1, 2].map((i) => (
+                              <div key={i} className="h-4 rounded" style={{ backgroundColor: t.colors.surface, border: `1px solid ${t.colors.border}` }} />
+                            ))}
+                          </div>
+                        </div>
+                        <div className="p-3 bg-card/60">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="text-sm font-semibold">{t.name}</p>
+                            {active && <Badge className="text-[10px] bg-secondary">Active</Badge>}
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{t.description}</p>
+                          <div className="flex items-center gap-1.5 mt-2">
+                            {[t.colors.primary, t.colors.accent, t.colors.bg].map((col) => (
+                              <span key={col} className="h-3.5 w-3.5 rounded-full border border-border/60" style={{ backgroundColor: col }} />
+                            ))}
+                            <span className="ml-auto text-[10px] text-muted-foreground">{t.tags[0]}</span>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-xs text-muted-foreground mt-4">
+                  Selecting a template saves instantly. Colours set under “Appearance” override the template palette.
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
 
           {/* Identity & Hero */}
           <TabsContent value="identity" className="mt-4 space-y-4">
