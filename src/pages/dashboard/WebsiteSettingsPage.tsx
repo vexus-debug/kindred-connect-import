@@ -81,6 +81,15 @@ export default function WebsiteSettingsPage() {
     updateClinic.mutate({ id: clinicSettings.id, settings: merged });
   };
 
+  const selectedTemplate = (form.template as string) || (settings as any)?.template || defaultTemplateId;
+
+  const handleSelectTemplate = (id: string) => {
+    setForm({ ...form, template: id });
+    handleSave({ template: id });
+  };
+
+
+
   const handleHeroUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !clinicSettings) return;
