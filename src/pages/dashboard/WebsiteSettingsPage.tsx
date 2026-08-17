@@ -9,8 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   Plus, Trash2, ExternalLink, Upload, Image as ImageIcon,
-  Globe, Palette, Clock, Share2, Shield, MessageSquare, Camera,
+  Globe, Palette, Clock, Share2, Shield, MessageSquare, Camera, LayoutTemplate,
 } from "lucide-react";
+import { websiteTemplates, defaultTemplateId } from "@/config/websiteTemplates";
+
 import {
   useClinicSettings, useUpdateClinicSettings,
   type SiteSettings, type OperatingHour, type Certification, type GalleryItem,
