@@ -27,8 +27,9 @@ export interface SiteSettings {
   template?: string;
 
   // Identity
-
+  welcome_text?: string;
   short_description?: string;
+
   hero_title?: string;
   hero_subtitle?: string;
   hero_image_url?: string;
